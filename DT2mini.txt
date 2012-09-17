@@ -1,0 +1,45 @@
+import java.awt.BorderLayout;import java.awt.Color;import java.awt.Container;import java.awt.Dimension;import java.awt.Graphics;import java.awt.Graphics2D;import java.awt.Point;import java.awt.RenderingHints;import java.awt.Toolkit;import java.awt.image.BufferedImage;import javax.swing.JFrame;import javax.swing.JPanel;
+public class DT2mini extends JFrame{private static final long serialVersionUID = 31979591836948245L;private DrawingArea drawingArea;
+public DT2mini(int width,int height){this(width,height,Color.WHITE,false); }
+public DT2mini(int width,int height,Color bgColor){this(width,height,bgColor,false); }
+public DT2mini(int width,int height,boolean antialiasing){this(width,height,Color.WHITE,antialiasing); }
+public DT2mini(int width,int height,Color bgColor,boolean antialiasing){drawingArea = new DrawingArea(new Dimension(width,height),bgColor,antialiasing);Container content = this.getContentPane();content.setLayout(new BorderLayout());content.add(drawingArea,BorderLayout.CENTER);this.setTitle("Martin Zlámal A11B0544P - (" + width + "x" + height + ") - Semestrální práce");this.setBackground(bgColor);	this.pack();this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);this.setResizable(true);Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();this.setLocation((screen.width-this.getSize().width)/2,(screen.height-this.getSize().height)/2);this.setVisible(true);}
+public void drawLine(int x1,int y1,int x2,int y2){drawingArea.drawLine(new Point(x1,y1),new Point(x2,y2));}
+public void drawPolyline(int[] array1,int[] array2){drawingArea.drawPolyline(array1,array2,array1.length);}
+public void drawOval(int x,int y,int width){drawingArea.drawOval(new Point(x,y),new Point(width,width));}
+public void drawOval(int x,int y,int width,int height){drawingArea.drawOval(new Point(x,y),new Point(width,height));}
+public void drawArc(int x,int y,int width,int height,int start_angle,int end_angle){drawingArea.drawArc(new Point(x,y),new Point(width,height),new Point(start_angle,end_angle));}
+public void drawPolygon(int[] array1,int[] array2){drawingArea.drawPolygon(array1,array2,array1.length);}
+public void drawRect(int x,int y,int width,int height){drawingArea.drawRect(new Point(x,y),new Point(width,height));}
+public void draw3DRect(int x,int y,int width,int height,boolean option){drawingArea.draw3DRect(new Point(x,y),new Point(width,height),option);}
+public void drawString(String text,int x,int y){drawingArea.drawString(text,new Point(x,y));}
+public void fillPolygon(int[] array1,int[] array2){drawingArea.fillPolygon(array1,array2,array1.length);}
+public void fill3DRect(int x,int y,int width,int height,boolean option){drawingArea.fill3DRect(new Point(x,y),new Point(width,height),option);}
+public void fillArc(int x,int y,int width,int height,int start_angle,int end_angle){drawingArea.fillArc(new Point(x,y),new Point(width,height),new Point(start_angle,end_angle));}
+public void fillOval(int x,int y,int width){drawingArea.fillOval(new Point(x,y),new Point(width,width));}
+public void fillOval(int x,int y,int width,int height){drawingArea.fillOval(new Point(x,y),new Point(width,height));}
+public void clear(){drawingArea.clear();}
+public void setColor(Color fgColor){drawingArea.setColor(fgColor);}
+public void stopUpdate(){drawingArea.stopUpdate();}
+public void startUpdate(){drawingArea.startUpdate();}}
+class DrawingArea extends JPanel{private static final long serialVersionUID = 12152324293031344L;private Dimension dimension;private BufferedImage image = null;private Graphics2D gcImage = null;private boolean antialiasing; private boolean invalidate = false;
+public DrawingArea(Dimension dimension,Color bgColor,boolean antialiasing){this.dimension = dimension;this.setBackground(bgColor);this.antialiasing = antialiasing;setPreferredSize(dimension);this.setVisible(true);}
+private void init(){if (image == null){image = (BufferedImage)(this.createImage(dimension.width,dimension.height));gcImage = image.createGraphics();gcImage.setBackground(this.getBackground());gcImage.clearRect(0,0,dimension.width,dimension.height);if (antialiasing){gcImage.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);gcImage.setRenderingHint(RenderingHints.KEY_RENDERING,	RenderingHints.VALUE_RENDER_QUALITY);}}}
+protected void paintComponent(Graphics g){super.paintComponent(g);if (invalidate == false && image != null)((Graphics2D) g).drawImage(image,null,0,0);}
+private void drawOnScreen(){if (invalidate == false)((Graphics2D) this.getGraphics()).drawImage(image,null,0,0);}
+public void drawLine(Point startPoint,Point endPoint){init();gcImage.drawLine(startPoint.x,startPoint.y,endPoint.x,endPoint.y);drawOnScreen();}
+public void drawPolyline(int[] array1,int[] array2,int points){init();gcImage.drawPolyline(array1,array2,points);drawOnScreen();}
+public void drawOval(Point startPoint,Point endPoint){init();gcImage.drawOval(startPoint.x,startPoint.y,endPoint.x,endPoint.y);drawOnScreen();}
+public void drawArc(Point startPoint,Point size,Point angle){init();gcImage.drawArc(startPoint.x,startPoint.y,size.x,size.y,angle.x,angle.y);drawOnScreen();}
+public void drawPolygon(int[] array1,int[] array2,int points){init();gcImage.drawPolygon(array1 ,array2,points);drawOnScreen();}
+public void drawRect(Point startPoint,Point endPoint){init();gcImage.drawRect(startPoint.x,startPoint.y,endPoint.x,endPoint.y);drawOnScreen();}
+public void draw3DRect(Point startPoint,Point size,boolean option){init();gcImage.draw3DRect(startPoint.x,startPoint.y,size.x,size.y,option);drawOnScreen();}
+public void drawString(String text,Point point){init();gcImage.drawString(text,point.x,point.y);drawOnScreen();}
+public void fillPolygon(int[] array1,int[] array2,int points){init();gcImage.fillPolygon(array1,array2,points);drawOnScreen();}
+public void fill3DRect(Point startPoint,Point size,boolean option){init();gcImage.fill3DRect(startPoint.x,startPoint.y,size.x,size.y,option);drawOnScreen();}
+public void fillArc(Point startPoint,Point size,Point angle){init();gcImage.fillArc(startPoint.x,startPoint.y,size.x,size.y,angle.x,angle.y);drawOnScreen();}
+public void fillOval(Point startPoint,Point endPoint){init();gcImage.fillOval(startPoint.x,startPoint.y,endPoint.x,endPoint.y);drawOnScreen();}
+public void setColor(Color fgColor){init();gcImage.setColor(fgColor);}
+public void clear(){init();gcImage.clearRect(0,0,dimension.width,dimension.height);drawOnScreen();}
+public void stopUpdate(){init();invalidate = true;}
+public void startUpdate(){init();invalidate = false;drawOnScreen();}}
